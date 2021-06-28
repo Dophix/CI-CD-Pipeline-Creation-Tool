@@ -1,4 +1,5 @@
 import os
+import sys
 from tkinter import *
 from tkinter.ttk import *
 from Model_Project import Project
@@ -28,32 +29,40 @@ class Controller:
             os.mkdir(self.dirName)
             self.gui.set_console("Output directory " + self.dirName + " Created ")
         except FileExistsError:
-            self.gui.set_console("Output directory " + self.dirName + " already exist ")
+            self.gui.set_console("Output directory '" + self.dirName + "' already exist ")
+        try:
+            if self.project.get_generation_format() == "JSON and commands only":
+                json_services.create_json_template(self.json_model.json_template, self.project.get_project_name())
+                self.__commands_file_generation()
 
-        if self.project.get_generation_format() == "JSON and commands only":
-            json_services.create_json_template(self.json_model.json_template, self.project.get_project_name())
-            self.__commands_file_generation()
-
-        if self.project.get_generation_format() == "Both":
-            self.__creation_process()
-            self.__commands_file_generation()
+            if self.project.get_generation_format() == "Both":
+                self.__creation_process()
+                self.__commands_file_generation()
+        except:
+            self.gui.set_console("Unexpected Error : " + str(sys.exc_info()))
 
     def __submit_btn_pressed(self):
-        self.__set_model_data()
-        self.json_template = "output/" + self.project.get_project_name() + "-template.json"
-        self.gui.set_recap()
-        self.__set_json_data()
-        self.gui.activate_creation_button()
+        try:
+            self.__set_model_data()
+            self.json_template = "output/" + self.project.get_project_name() + "-template.json"
+            self.gui.set_recap()
+            self.__set_json_data()
+            self.gui.activate_creation_button()
+        except:
+            self.gui.set_console("Unexpected Error : " + str(sys.exc_info()))
 
     def __creation_process(self):
-        if self.project.get_generation_type() == "SDK":
-            self.__sdk_creation()
+        try:
+            if self.project.get_generation_type() == "SDK":
+                self.__sdk_creation()
 
-        if self.project.get_generation_type() == "API":
-            self.__api_creation()
+            if self.project.get_generation_type() == "API":
+                self.__api_creation()
 
-        if self.project.get_generation_type() == "FRONT":
-            self.__front_creation()
+            if self.project.get_generation_type() == "FRONT":
+                self.__front_creation()
+        except:
+            self.gui.set_console("Unexpected Error : " + str(sys.exc_info()))
 
     def __set_model_data(self):
         self.project.set_project_name(self.gui.get_project_name())
@@ -89,22 +98,25 @@ class Controller:
         pass
 
     def __commands_file_generation(self):
-        filename = "output/" + commands_generator.create_command_file(self.project.get_project_name())
-        if self.project.get_generation_type() == "SDK":
-            commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())
-            commands_generator.add_basic_files_to_codecommit_command(filename, self.project.get_codecommit_name())
-            commands_generator.write_codepipeline_command(filename, self.json_template)
-            self.gui.set_console("SDK command and JSON template created")
+        try:
+            filename = "output/" + commands_generator.create_command_file(self.project.get_project_name())
+            if self.project.get_generation_type() == "SDK":
+                commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())
+                commands_generator.add_basic_files_to_codecommit_command(filename, self.project.get_codecommit_name())
+                commands_generator.write_codepipeline_command(filename, self.json_template)
+                self.gui.set_console("SDK command and JSON template created")
 
-        if self.project.get_generation_type() == "API":
-            pass
+            if self.project.get_generation_type() == "API":
+                pass
 
-        if self.project.get_generation_type() == "FRONT":
-            commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())
-            commands_generator.add_basic_files_to_codecommit_command(filename, self.project.get_codecommit_name())
-            commands_generator.write_bucketS3_command(filename, self.project.get_bucket_name())
-            commands_generator.write_codepipeline_command(filename, self.json_template)
-            self.gui.set_console("FRONT command and JSON template created")
+            if self.project.get_generation_type() == "FRONT":
+                commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())
+                commands_generator.add_basic_files_to_codecommit_command(filename, self.project.get_codecommit_name())
+                commands_generator.write_bucketS3_command(filename, self.project.get_bucket_name())
+                commands_generator.write_codepipeline_command(filename, self.json_template)
+                self.gui.set_console("FRONT command and JSON template created")
+        except:
+            self.gui.set_console("Unexpected Error : " + str(sys.exc_info()))
 
 
 if __name__ == '__main__':

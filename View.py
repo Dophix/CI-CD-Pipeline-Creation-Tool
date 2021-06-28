@@ -77,33 +77,33 @@ class GUI:
         self.label_projectname.grid(column=0, row=2, pady=5, sticky=W)
 
         # Textbox Projectname
-        self.entry_projectname.bind("<KeyRelease>", self.__update_codecommit_name)
+        self.entry_projectname.bind("<KeyRelease>", self.__update_codecommit_and_pipeline_name)
         self.entry_projectname.grid(column=1, row=2, pady=5, sticky=E)
 
         # Label Codecommit Reponame
-        self.label_codecommit.grid(column=0, row=3, pady=5, sticky=N+W)
+        self.label_codecommit.grid(column=0, row=3, pady=5, sticky=N + W)
 
         # Label Codecommit Reponame Example
-        self.label_codecommit_reponame.grid(column=1, row=3, padx=10, pady=5, sticky=W+N)
+        self.label_codecommit_reponame.grid(column=1, row=3, padx=10, pady=5, sticky=W + N)
 
         # Label Pipeline name
         self.label_pipeline.grid(column=0, row=4, pady=5, sticky=N + W)
 
         # Label Pipeline name Example
-        self.label_pipeline_namelist.grid(column=1, row=4, padx=10, pady=5, sticky=W+N)
+        self.label_pipeline_namelist.grid(column=1, row=4, padx=10, pady=5, sticky=W + N)
 
         # Label Codebuild Builder choice
         self.label_codebuild.grid(column=0, row=5, pady=5, sticky=W)
 
         # Combobox Codebuild Builder Choice
         self.combo_codebuild.current(0)
-        self.combo_codebuild.grid(column=1, row=5, pady=5, sticky=N+E)
+        self.combo_codebuild.grid(column=1, row=5, pady=5, sticky=N + E)
 
         # Bucket Label
         self.bucket_name.grid(column=0, row=6, pady=5, sticky=W)
 
         # Bucket Projectname
-        self.entry_bucket_name.bind("<KeyRelease>", self.__update_codecommit_name)
+        self.entry_bucket_name.bind("<KeyRelease>", self.__update_codecommit_and_pipeline_name)
         self.entry_bucket_name.grid(column=1, row=6, pady=5, sticky=E)
 
         # Recap label
@@ -121,8 +121,7 @@ class GUI:
         # Console
         self.console_text.grid(column=0, row=1, pady=5)
 
-
-    def __update_codecommit_name(self, event=None):
+    def __update_codecommit_and_pipeline_name(self, event=None):
         codecommit_name = ""
         pipeline_name = ""
         codecommit_name = codecommit_name + view_input_output.set_project_name_refactor(
@@ -159,14 +158,14 @@ class GUI:
         self.recap_text.configure(state='normal')
         self.recap_text.delete("1.0", END)
         for d in data:
-            txt = d["name"]+" "+d["data"]+"\n"
+            txt = d["name"] + " " + d["data"] + "\n"
             self.recap_text.insert('end', txt)
         self.__update_size_recap()
         self.recap_text.configure(state='disabled')
 
     def set_console(self, text):
         self.console_text.configure(state='normal')
-        self.console_text.insert('end', text+"\n")
+        self.console_text.insert('end', text + "\n")
         self.__update_size_console()
         self.console_text.configure(state='disabled')
 
