@@ -12,11 +12,13 @@ def create_command_file(project_name: str):
 
 def write_codecommit_command(command_path: str, codecommit_name: str):
     log_file = open(command_path, "a")
+    log_file.write("Create Codecommit Repository :")
     log_file.write("aws codecommit create-repository --repository-name " + codecommit_name + "\n")
     log_file.close()
 
 def add_basic_files_to_codecommit_command(command_path: str, codecommit_name: str):
     log_file = open(command_path, "a")
+    log_file.write("Fill Codecommit with .gitignore and README.md files :")
     log_file.write("aws codecommit create-commit --repository-name " + codecommit_name +
                    "--branch-name master --put-files "
                    "filePath=README.md,fileContent='Welcome to our team repository.' "
@@ -25,6 +27,7 @@ def add_basic_files_to_codecommit_command(command_path: str, codecommit_name: st
 
 def write_bucketS3_command(command_path: str, bucket_name: str):
     log_file = open(command_path, "a")
+    log_file.write("Create S3 Bucket :")
     log_file.write("aws s3api create-bucket --bucket " + bucket_name +
                    " --region eu-central-1 --create-bucket-configuration LocationConstraint=eu-central-1" + "\n")
     log_file.close()
@@ -32,5 +35,6 @@ def write_bucketS3_command(command_path: str, bucket_name: str):
 
 def write_codepipeline_command(command_path: str, json_path: str):
     log_file = open(command_path, "a")
+    log_file.write("Create your project pipeline :")
     log_file.write("aws codepipeline create-pipeline --cli-input-json file://" + json_path + "\n")
     log_file.close()
