@@ -3,7 +3,7 @@ import sys
 from tkinter import *
 from tkinter.ttk import *
 from Model_Project import Project
-from functions import json_services, AWS_services, commands_generator
+from functions import json_services, AWS_services, commands_generator, log_name_generator
 from View import GUI
 from pubsub import pub
 from json_generator import JSON_model
@@ -69,6 +69,8 @@ class Controller:
         self.project.set_codebuild_name(self.gui.get_selected_codebuild_builder())
         self.project.set_codecommit_name(self.gui.get_codecommit_name())
         self.project.set_pipeline_name(self.gui.get_pipeline_names())
+        self.project.set_cluster(self.gui.get_cluster_name())
+        self.project.set_service(self.gui.get_codecommit_name())
         self.project.set_bucket(self.gui.get_bucket_name())
         self.project.set_generation_format(self.gui.get_generation_format())
         self.project.set_generation_type(self.gui.get_generation_type())
@@ -77,9 +79,9 @@ class Controller:
         self.json_model.set_name(self.project.get_project_name())
         self.json_model.set_RepositoryName(self.project.get_codecommit_name())
         self.json_model.set_ProjectName(self.project.get_codebuild_name())
-        self.json_model.set_ClusterName("")
-        self.json_model.set_FileName("")
-        self.json_model.set_ServiceName("")
+        self.json_model.set_ClusterName(self.project.get_cluster())
+        self.json_model.set_FileName("taskdefinition.json")
+        self.json_model.set_ServiceName(self.project.get_service())
         self.json_model.set_BucketName(self.project.get_bucket_name())
         self.json_model.json_declaration(self.project.get_generation_type())
 
@@ -95,11 +97,14 @@ class Controller:
         self.aws_services.create_pipeline(self.json_template)
 
     def __api_creation(self):
-        pass
+        self.aws_services.create_codecommit_repo(self.project.get_codecommit_name())
+        json_services.create_json_template(self.json_model.json_template, self.project.get_project_name())
+        self.aws_services.create_ECS(self.project.get_cluster(), self.project.get_service())
+        self.aws_services.create_pipeline(self.json_template)
 
     def __commands_file_generation(self):
         try:
-            filename = "output/" + commands_generator.create_command_file(self.project.get_project_name())
+            filename = "output/" + log_name_generator.create_logfile_name(self.project.get_project_name())
             if self.project.get_generation_type() == "SDK":
                 commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())
                 commands_generator.add_basic_files_to_codecommit_command(filename, self.project.get_codecommit_name())
@@ -107,7 +112,11 @@ class Controller:
                 self.gui.set_console("SDK command and JSON template created")
 
             if self.project.get_generation_type() == "API":
-                pass
+                commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())
+                commands_generator.add_basic_files_to_codecommit_command(filename, self.project.get_codecommit_name())
+                commands_generator.write_ECS_command(filename, self.project.get_cluster(), self.project.get_service())
+                commands_generator.write_codepipeline_command(filename, self.json_template)
+                self.gui.set_console("API command and JSON template created")
 
             if self.project.get_generation_type() == "FRONT":
                 commands_generator.write_codecommit_command(filename, self.project.get_codecommit_name())

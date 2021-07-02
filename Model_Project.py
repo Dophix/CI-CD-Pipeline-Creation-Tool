@@ -9,6 +9,8 @@ class Project:
         self.codebuild_project_name =None
         self.pipeline_name = None
         self.S3_repo = None
+        self.cluster_name = None
+        self.service_name = None
         self.generation_type = None
         self.generation_format = None
 
@@ -26,6 +28,12 @@ class Project:
 
     def set_bucket(self, name):
         self.S3_repo = "capcod-"+name
+
+    def set_cluster(self, name):
+        self.cluster_name = name
+
+    def set_service(self, name):
+        self.service_name = name
 
     def set_generation_format(self, name):
         self.generation_format = name
@@ -47,6 +55,12 @@ class Project:
 
     def get_bucket_name(self):
         return self.S3_repo
+
+    def get_cluster(self):
+        return self.cluster_name
+
+    def get_service(self):
+        return self.service_name
 
     def get_generation_format(self):
         return self.generation_format

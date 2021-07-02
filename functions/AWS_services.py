@@ -5,7 +5,7 @@ from functions import log_name_generator
 class AWS_services:
     def __init__(self, view):
         self.view = view
-        self.log_file_name = "output/" + log_name_generator.create_logfile_name()
+        self.log_file_name = "output/" + log_name_generator.create_logfile_name("console_log")
 
     def create_pipeline(self, json_file_path: str):
         proc = Popen(
@@ -73,6 +73,23 @@ class AWS_services:
         log_file = open(self.log_file_name, "a")
         log_file.write("\n  ===============  Bucket S3  ===============  \n")
         self.view.set_console("\nBucket S3 :\n")
+        for line in proc.stdout:
+            if line:
+                self.view.set_console(line.strip())
+                log_file.write(line.strip()+"\n")
+
+        proc.terminate()
+        log_file.close()
+
+    def create_ECS(self, cluster_name: str, service_name: str):
+        proc = Popen(
+            ["aws", "ecs", "create-service", "--cluster", cluster_name, "--service-name", service_name],
+            stdout=PIPE, stderr=STDOUT, shell=True, text=True
+        )
+
+        log_file = open(self.log_file_name, "a")
+        log_file.write("\n  ===============  ECS  ===============  \n")
+        self.view.set_console("\nECS :\n")
         for line in proc.stdout:
             if line:
                 self.view.set_console(line.strip())

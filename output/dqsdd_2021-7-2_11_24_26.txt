@@ -1,0 +1,16 @@
+
+      Create Codecommit Repository :
+
+aws codecommit create-repository --repository-name dqsdd
+
+      Fill Codecommit with .gitignore and README.md files :
+
+aws codecommit create-commit --repository-name dqsdd--branch-name master --put-files filePath=README.md,fileContent='Welcome to our team repository.' filePath=.gitignore,fileContent=''
+
+      Create ECS cluster and service :
+
+aws ecs create-service --cluster cluster/TestClusterVlad--service-name dqsdd
+
+      Create your project pipeline :
+
+aws codepipeline create-pipeline --cli-input-json file://output/dqsdd-template.json

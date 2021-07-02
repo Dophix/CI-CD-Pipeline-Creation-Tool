@@ -32,6 +32,9 @@ class GUI:
         self.label_codebuild = Label(self.left_top_frame, text="CodeBuild Builder")
         self.combo_codebuild = Combobox(self.left_top_frame, width=25,
                                         values=view_input_output.fetch_codebuild_projects())
+        self.label_clusters = Label(self.left_top_frame, text="Cluster")
+        self.combo_clusters = Combobox(self.left_top_frame, width=25,
+                                        values=view_input_output.fetch_cluster_list())  # ["Cluster1","Cluster2","Cluster3"]
         self.bucket_name = Label(self.left_top_frame, text="Bucket Name")
         self.entry_bucket_name = Entry(self.left_top_frame, width=28)
         self.recap_name = Label(self.left_top_frame, text="Recap")
@@ -99,18 +102,25 @@ class GUI:
         self.combo_codebuild.current(0)
         self.combo_codebuild.grid(column=1, row=5, pady=5, sticky=N + E)
 
+        # Label CCluster Choice
+        self.label_clusters.grid(column=0, row=6, pady=5, sticky=W)
+
+        # Combobox Cluster Choice
+        self.combo_clusters.current(0)
+        self.combo_clusters.grid(column=1, row=6, pady=5, sticky=N + E)
+
         # Bucket Label
-        self.bucket_name.grid(column=0, row=6, pady=5, sticky=W)
+        self.bucket_name.grid(column=0, row=7, pady=5, sticky=W)
 
         # Bucket Projectname
         self.entry_bucket_name.bind("<KeyRelease>", self.__update_codecommit_and_pipeline_name)
-        self.entry_bucket_name.grid(column=1, row=6, pady=5, sticky=E)
+        self.entry_bucket_name.grid(column=1, row=7, pady=5, sticky=E)
 
         # Recap label
-        self.recap_name.grid(column=0, row=7, pady=5, sticky=W)
+        self.recap_name.grid(column=0, row=8, pady=5, sticky=W)
 
         # Recap text
-        self.recap_text.grid(column=0, row=7, pady=5)
+        self.recap_text.grid(column=0, row=8, pady=5)
 
         # Submit Button
         self.submit_button.grid(column=0, row=0, pady=5)
@@ -185,6 +195,9 @@ class GUI:
     def get_selected_codebuild_builder(self):
         return self.combo_codebuild.get()
 
+    def get_cluster_name(self):
+        return self.combo_clusters.get()
+
     def get_pipeline_names(self):
         return self.label_pipeline_namelist["text"]
 
@@ -193,3 +206,5 @@ class GUI:
 
     def get_generation_format(self):
         return self.combo_generation_format.get()
+
+
